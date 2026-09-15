@@ -158,9 +158,13 @@ Only these 40 names render — an unknown name (e.g. a guessed `"pin"`) leaves t
 
 **Per-category icons:** to give each color band its own marker, pass `styleValues.icons` (an array aligned with `colors`) instead of a single `icon`. Pair it with a `colorColumn` (e.g. store type) + `fillMethod: "ordinal"` so each category lands a distinct color + icon. The frontend reads `icons[colorIndex]`, so `icons[i]` corresponds to `colors[i]`. Example: `colors: ["#e41a1c","#377eb8","#4daf3a"]` + `icons: ["restaurant","cafe","bar"]` → red restaurants, blue cafes, green bars. When `icons` is set it overrides `icon`. Unknown names in the array are replaced with `location` per entry (same warning mechanism as `icon`).
 
-### radius — marker/heat size in pixels (`point`/`icon`/`heatmap`)
+### radius — marker/heat size (`point`/`icon`/`heatmap`)
 
-Pixel radius, 0–100. Defaults (match the frontend): `point` **10**, `icon` **20**, `heatmap` **20**. The frontend renders icon markers at radius × 1.6, so icons need a larger radius than plain circles to look comparable. If a heatmap looks faint or a point set looks crowded, adjust `radius`. Frontend slider range is 0–100 px; heatmap is always pixel-based (no meter mode).
+Circle radius, **0–100 px** by default. Defaults (match the frontend): `point` **10**, `icon` **20**, `heatmap` **20**. The frontend renders icon markers at radius × 1.6, so icons need a larger radius than plain circles to look comparable. If a heatmap looks faint or a point set looks crowded, adjust `radius`. Heatmap is always pixel-based (no meter mode).
+
+**Meter mode (`point`/`icon` only):** pass `fixedToMeter: true` to interpret `radius` in meters on the ground (**0–5000**) — circles keep their real-world size while zooming instead of shrinking with the zoom level. Use it when the circle stands for a real distance (service radius, coverage, blast area), e.g. `radius: 500` + `fixedToMeter: true` for a 500 m catchment.
+
+**Per-feature size by field (`point`/`icon`):** pair `fieldMappings.radiusColumn` (a number column) with `radiusRange` — the column's min/max values map linearly onto this `[min, max]` range. Pixels `0 < min < max ≤ 100` by default; meters `0 ≤ min < max ≤ 5000` with `fixedToMeter: true` (e.g. a sales column drives 100–2000 m circles). Default `[4, 40]`.
 
 ## Region-layer recipes — pick the layer, prep the data
 
